@@ -40,6 +40,13 @@ if __name__ == '__main__':
     x_test = x_test.astype('float32') / 255
 
     x_train = np.expand_dims(x_train, axis=-1)
-    x_test = np.expand_dims(x_train, axis=-1)
+    x_test = np.expand_dims(x_test, axis=-1)
+
+    y_train = tensorflow.keras.utils.to_categorical(y_train, 10)
+    y_test = tensorflow.keras.utils.to_categorical(y_test, 10)
 
     model.compile(optimizer='adam', loss='categorical_crossentropy', metrics='accuracy')
+
+    model.fit(x_train, y_train, batch_size=64, epochs=3, validation_split=0.2)
+
+    model.evaluate(x_test, y_test, batch_size=64)
