@@ -1,6 +1,28 @@
 import tensorflow
 import matplotlib.pyplot as plt
 import numpy as np
+from tensorflow.keras.layers import Conv2D, Input, Dense, MaxPool2D, BatchNormalization, GlobalAvgPool2D
+from tensorflow.python.keras import activations
+
+# tensorflow.keras.Sequential
+model = tensorflow.keras.Sequential(
+    [
+        Input(shape=(28,28,1)),
+        Conv2D(32, (3,3), activation='relu'),
+        Conv2D(64, (3,3), activation='relu'),
+        MaxPool2D(),
+        BatchNormalization(),
+
+        Conv2D(128, (3,3), activation='relu'),
+        MaxPool2D(),
+        BatchNormalization(),
+
+        GlobalAvgPool2D(),
+        Dense(64, activation='relu'),
+        Dense(10, activation='softmax')
+    ]
+ )
+
 
 def display_examples(examples, labels):
 
