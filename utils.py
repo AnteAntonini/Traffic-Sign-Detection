@@ -1,9 +1,12 @@
+from calendar import c
+import csv
 import matplotlib.pyplot as plt
 import numpy as np
 import os
 import glob
 import shutil
 from sklearn.model_selection import train_test_split
+import csv
 
 
 
@@ -52,3 +55,40 @@ def split_data(data_path, save_train_path, save_val_path, split_size=0.1):
                 os.makedirs(path_to_folder)
 
             shutil.copy(x, path_to_folder)
+
+
+def order_test_set(images_path, csv_path):
+
+    try:
+        with open(csv_path, 'r') as csvfile:
+
+            reader = csv.reader(csvfile, delimiter=',')
+
+            for i, row in enumerate(reader):
+
+                if i==0:
+                    continue
+
+                image_name = row[-1].replace('Test/', '')
+                label = row[-2]
+
+                folder_path = os.path.join(images_path, label)
+
+                if not os.path.isdir(folder_path):
+                    os.makedirs(folder_path)
+
+                image_full_path = os.path.join(images_path, image_name)
+                shutil.move(image_full_path, folder_path)
+
+    except:
+        print('Error while reading CSV file')
+
+
+                
+
+
+
+
+
+
+
