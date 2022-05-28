@@ -8,6 +8,7 @@ from tensorflow.keras.callbacks import ModelCheckpoint, EarlyStopping
 
 from utils import split_data, order_test_set, create_generators
 
+from models import streetsigns_model
 import tensorflow as tf
 
 if __name__ == "__main__":
@@ -28,6 +29,7 @@ if __name__ == "__main__":
     test_path = "C:\\Users\\niniy\\Downloads\\TrafficSigns\\Test"
     batch_size = 32
     epochs = 10
+    lr=0.0001
 
     train_generator, val_generator, test_generator  = create_generators(batch_size,train_path, val_path, test_path)
     num_classes = train_generator.num_classes
@@ -50,9 +52,11 @@ if __name__ == "__main__":
 
         model = streetsigns_model(num_classes)
 
-        model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
+        optimizer = tf.keras.optimizers.Adam(learning_rate=lr, amsgrad=True)
 
-        model.fit(train_generator,epochs=epochs,batch_size=batch_size,validation_data=val_generator, callbacks=[checkpoint_saver, early_stop])
+        model.compile(optimizer=optimizer, loss='categorical_crossentropy', metrics=['accuracy'])
+
+        model.fit(train_generator,epochs = epochs, batch_size = batch_size, validation_data = val_generator, callbacks = [checkpoint_saver, early_stop])
 
     if TEST:
         model = tf.keras.models.load_model('./Models')
