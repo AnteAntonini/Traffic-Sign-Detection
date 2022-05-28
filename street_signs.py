@@ -1,8 +1,10 @@
+from gc import callbacks
 import os
 import glob
 import shutil
 from sklearn import metrics
 from sklearn.model_selection import train_test_split
+from tensorflow.keras.callbacks import ModelCheckpoint, EarlyStopping
 
 from utils import split_data, order_test_set, create_generators
 
@@ -30,13 +32,21 @@ if __name__ == "__main__":
     train_generator, val_generator, test_generator  = create_generators(batch_size,train_path, val_path, test_path)
     num_classes = train_generator.num_classes
 
+    save_model_path = './Models'
+    checkpoint_saver = ModelCheckpoint(
+        save_model_path,
+        monitor="val_accuracy",
+        mode='max',
+        save_best_only=True,
+        save_freq='epoch',
+        verbose=1
+    )
+
+    early_stop = EarlyStopping(monitor="val_accuracy", patience=10)
+
     model = streetsigns_model(num_classes)
 
     model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
 
-    model.fit(train_generator,
-              epochs,
-              batch_size=batch_size,
-              validation_data=val_generator
-            )
+    model.fit(train_generator,epochs=epochs,batch_size=batch_size,validation_data=val_generator, callbacks=[checkpoint_saver, early_stop])
 
