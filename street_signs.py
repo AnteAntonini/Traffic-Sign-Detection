@@ -5,6 +5,8 @@ from sklearn.model_selection import train_test_split
 
 from utils import split_data, order_test_set
 
+from models import streetsigns_model
+
 if __name__ == "__main__":
 
     if False:
