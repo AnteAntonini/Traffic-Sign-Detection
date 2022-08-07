@@ -28,14 +28,14 @@ if __name__ == "__main__":
     val_path = "C:\\Users\\niniy\\Downloads\\TrafficSigns\\training_data\\val"    
     test_path = "C:\\Users\\niniy\\Downloads\\TrafficSigns\\Test"
     batch_size = 32
-    epochs = 10
+    epochs = 4
     lr=0.0001
 
     train_generator, val_generator, test_generator  = create_generators(batch_size,train_path, val_path, test_path)
     num_classes = train_generator.num_classes
 
-    TRAIN=False
-    TEST=True
+    TRAIN=True
+    TEST=False
 
     if TRAIN:
         save_model_path = './Models'
