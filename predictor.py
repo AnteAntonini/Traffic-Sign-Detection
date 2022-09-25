@@ -3,8 +3,50 @@ import tensorflow as tf
 import numpy as np
 from tkinter.filedialog import askopenfilename
 import PySimpleGUI as sg
+from flask import Flask, render_template, url_for, redirect, session, request
+from flask_cors import CORS
 
+app = Flask(__name__)
+app.secret_key = "super secret key"
 
+CORS(app, resources={r'/*': {'origins': '*'}})
+
+def prediction_status(prediction):
+    match prediction:
+        case 0:
+            return " 20km/h"
+        case 1:
+            return " 30km/h"
+        case 2:
+            return " 50km/h"
+        case 3:
+            return " 60km/h"
+        case 4:
+            return " 70km/h"
+        case 5:
+            return " 80km/h"
+        case 6:
+            return " prestanak ogranicenja 80km/h"
+        case 7:
+            return " 100km/h"
+        case 8:
+            return " 120km/h"
+        case 9:
+            return " zabrana pretjecanja svih motornih vozila, osim mopeda"
+        case 10:
+            return ""
+        case 11:
+            return ""
+        case 12:
+            return " 50km/h"
+        case 13:
+            return ""
+        case 14:
+            return ""
+        case 15:
+            return ""
+        case _:
+            return "Something's went wrong with predicting "
 
 def predict_with_model(model, imgpath):
 
@@ -19,54 +61,47 @@ def predict_with_model(model, imgpath):
 
     return predictions
 
+@app.route('/')
+def index():
+    return render_template('index.html')
 
+@app.route('/predict', methods=["POST", "GET"])
 
-if __name__=="__main__":
+def predict():
 
+    imgpath = request.form.get("imagePath")
+    model = tf.keras.models.load_model('./Models')
+    prediction = predict_with_model(model, imgpath)
+
+    predictedSign = prediction_status(prediction)
+    
+    return predictedSign
+
+@app.route('/background_process_test', methods=["POST", "GET"])
+
+def background_process_test():
     img_path = askopenfilename()
+
+    print('img_path', img_path)
 
     model = tf.keras.models.load_model('./Models')
     prediction = predict_with_model(model, img_path)
 
+    predictedSign = prediction_status(prediction)
+
+    session['my_var'] = predictedSign
+
+    
     print(f"prediction is = {prediction}")
+    return redirect(url_for('prediction'))
 
-    def prediction_status(prediction):
-        match prediction:
-            case 0:
-                return "sign type : 20km/h"
-            case 1:
-                return "sign type : 30km/h"
-            case 2:
-                return "sign type : 50km/h"
-            case 3:
-                return "sign type : 60km/h"
-            case 4:
-                return "sign type : 70km/h"
-            case 5:
-                return "sign type: 80km/h"
-            case 6:
-                return "sign type: prestanak ogranicenja 80km/h"
-            case 7:
-                return "sign type: 100km/h"
-            case 8:
-                return "sign type : 120km/h"
-            case 9:
-                return "sign type : zabrana pretjecanja svih motornih vozila, osim mopeda"
-            case 10:
-                return "sign type :"
-            case 11:
-                return "sign type :"
-            case 12:
-                return "sign type : 50km/h"
-            case 13:
-                return "sign type :"
-            case 14:
-                return "sign type :"
-            case 15:
-                return "sign type :"
-            case _:
-                return "Something's went wrong with predicting "
 
-    font = ("Arial", 12)
-    sg.popup_no_buttons(f"--- Prediction is {prediction_status(prediction)} ---", title='Prediction', text_color=('#F7F6F2'), keep_on_top=True, image=img_path, font=font)
-    print(f"prediction_status is = {prediction_status(prediction)}")
+@app.route('/prediction', methods=["GET"])
+def prediction():
+    my_var = session.get('my_var', prediction)
+    return render_template('prediction.html', var=my_var)
+    
+
+if __name__=="__main__":
+
+    app.run(debug = True)

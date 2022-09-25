@@ -36,8 +36,7 @@ if __name__ == '__main__':
     print("x_test.shape = ", x_test.shape)
     print("y_test.shape = ", y_test.shape)
 
-    if False:
-        display_examples(x_train, y_train)
+    display_some_examples(x_train, y_train)
 
     x_train = x_train.astype('float32') / 255
     x_test = x_test.astype('float32') / 255
