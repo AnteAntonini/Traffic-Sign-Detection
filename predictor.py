@@ -69,7 +69,8 @@ def index():
 
 def predict():
 
-    imgpath = request.form.get("imagePath")
+    imgpath = "C:\\Users\\niniy\\Downloads\\TrafficSigns\\Images\\" + request.form.get("imagePath")
+    print(f"img path is = {imgpath}")
     model = tf.keras.models.load_model('./Models')
     prediction = predict_with_model(model, imgpath)
 
