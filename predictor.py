@@ -19,15 +19,15 @@ def prediction_status(prediction):
             return " 30km/h"
         case 2:
             return " 50km/h"
-        case 3:
+        case 23:
             return " 60km/h"
-        case 4:
+        case 34:
             return " 70km/h"
-        case 5:
+        case 38:
             return " 80km/h"
         case 6:
             return " prestanak ogranicenja 80km/h"
-        case 7:
+        case 40:
             return " 100km/h"
         case 8:
             return " 120km/h"
@@ -70,9 +70,10 @@ def index():
 def predict():
 
     imgpath = "C:\\Users\\niniy\\Downloads\\TrafficSigns\\Images\\" + request.form.get("imagePath")
-    print(f"img path is = {imgpath}")
     model = tf.keras.models.load_model('./Models')
     prediction = predict_with_model(model, imgpath)
+
+    print('prediction', prediction)
 
     predictedSign = prediction_status(prediction)
     
@@ -83,7 +84,6 @@ def predict():
 def background_process_test():
     img_path = askopenfilename()
 
-    print('img_path', img_path)
 
     model = tf.keras.models.load_model('./Models')
     prediction = predict_with_model(model, img_path)
